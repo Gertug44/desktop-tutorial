@@ -21,8 +21,8 @@ void ClientHandler(int index) {
 	int msg_size;
 	while (true) {
 		//recv(Connections[index], msg, sizeof(msg), NULL); //получение сообщения
-
-		if (int bytw = recv(Connections[index], (char*)&msg_size, sizeof(int), NULL) < 1) {
+		int bytw = recv(Connections[index], (char*)&msg_size, sizeof(int), NULL);
+		if (bytw < 1) {
 			std::string indexstr = std::to_string(Connections[index]);
 			std::string str = "User number " + indexstr + " disconnect";
 			int mes_size = sizeof(str);
@@ -49,14 +49,14 @@ void ClientHandler(int index) {
 			//send(Connections[index], (char*)&msg_size, sizeof(int), NULL);
 			//send(Connections[index], str1.c_str(), msg_size, NULL); //отправка сообщения
 			std::string str = "User number " + indexstr + ": " + msg;
-			int mes_size = sizeof(str);
+			int mes_size = str.size();
 			for (int i = 0; i < Counter; i++) {
 				if (i == index) {
 					continue;
 				}
 				if (Connections[i] != 0) {
 					send(Connections[i], (char*)&mes_size, sizeof(int), NULL);
-					send(Connections[i], str.c_str(), sizeof(str), NULL);
+					send(Connections[i], str.c_str(), mes_size, NULL);
 				}		
 			}
 		}
